@@ -1,0 +1,19 @@
+﻿@page "/login"
+@rendermode InteractiveServer
+<form @onsubmit:preventDefault>
+    <label class="form-label">Tytuł</label>
+    <input @bind="Login" class="form-control mb-3" placeholder="Login" />
+
+    <label class="form-label">Treść</label>
+    <input @bind="Password" class="form-control mb-3" rows="6" placeholder="Hasło"></input>
+
+
+    <button type="submit" class="btn btn-primary w-100">Dodaj</button>
+</form>
+
+
+@code {
+    public required string Login { get; set; } 
+    public required string Password { get; set; } 
+
+}

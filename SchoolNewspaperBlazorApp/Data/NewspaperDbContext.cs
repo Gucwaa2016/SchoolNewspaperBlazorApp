@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Security.Policy;
 
 namespace SchoolNewspaperBlazorApp.Data
 {
@@ -7,6 +8,7 @@ namespace SchoolNewspaperBlazorApp.Data
         public NewspaperDbContext(DbContextOptions<NewspaperDbContext> options)
             : base(options) {}
         public DbSet<Article> Articles { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<MediaFile> Files { get; set; }
         protected override void OnModelCreating(ModelBuilder mb)
         {

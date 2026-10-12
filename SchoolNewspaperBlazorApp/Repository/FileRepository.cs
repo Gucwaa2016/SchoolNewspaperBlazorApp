@@ -28,7 +28,7 @@ namespace SchoolNewspaperBlazorApp.Repository
             }
             return fileId;
         }
-        public async Task AddFileAsync(Data.MediaFile file)
+        public async Task AddFileAsync(MediaFile file)
         {
             await _context.Files.AddAsync(file);
             await _context.SaveChangesAsync();
