@@ -95,7 +95,6 @@
                                required />
                     </div>
                 </div>
-
                 <div class="login-field">
                     <label for="login-password">Hasło</label>
 
@@ -165,11 +164,13 @@
         if(succces)
         {
             errorMessage = "Udało się zalogować!";
+            isBusy = false;
 
         }
         else
         {
             errorMessage = "Nie udało się zalogować. Spróbuj ponownie.";
+            isBusy = false;
 
         }
 
