@@ -8,11 +8,12 @@ namespace SchoolNewspaperBlazorApp.Service
     public class FileService : IFileService
     {
         private readonly IFileRepository _fileRepository;
-        public FileService(IFileRepository fileRepository)
+        private readonly string _uploadPath;
+        public FileService(IFileRepository fileRepository, IWebHostEnvironment environment)
         {
             _fileRepository = fileRepository;
+            _uploadPath = Path.Combine(environment.ContentRootPath, "Images");
         }
-        private readonly string uploadPath = @"C:\Users\Praktyka\source\repos\SchoolNewspaperBlazorApp\Images";
         public async Task<string> GetPreviewAsync(IBrowserFile file)
         {
             using var stream = file.OpenReadStream(5 * 1024 * 1024);
@@ -24,13 +25,13 @@ namespace SchoolNewspaperBlazorApp.Service
         public async Task<int> UploadImage(IBrowserFile file)
         {
             //Tworzenie folderu
-            Directory.CreateDirectory(uploadPath);
+            Directory.CreateDirectory(_uploadPath);
             //Pobieranie extension z pliku czyli np .png
             string extension = Path.GetExtension(file.Name);
             //Generowanie nazwy + extension np. plik.png
             string fileName = $"{Guid.NewGuid()}{extension}";
             // łaczenie uploadPath i fileName C:\Users\Praktyka\source\repos\SchoolNewspaperBlazorApp\Images\plik.png
-            string fullPath = Path.Combine(uploadPath, fileName);
+            string fullPath = Path.Combine(_uploadPath, fileName);
 
             using var stream = file.OpenReadStream(5 * 1024 * 1024);
             using var fileStream = new FileStream(

@@ -41,11 +41,15 @@ namespace SchoolNewspaperBlazorApp
                 app.UseHsts();
             }
 
+            var imagesPath = Path.Combine(
+                builder.Environment.ContentRootPath,
+                "Images"
+            );
+            Directory.CreateDirectory(imagesPath);
             app.UseStaticFiles();
             app.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new PhysicalFileProvider
-                (@"C:\Users\Praktyka\source\repos\SchoolNewspaperBlazorApp\Images"),
+                FileProvider = new PhysicalFileProvider(imagesPath),
                 RequestPath = "/Images"
             });
 
