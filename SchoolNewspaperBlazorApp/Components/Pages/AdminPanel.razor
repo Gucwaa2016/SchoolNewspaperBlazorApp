@@ -1,10 +1,11 @@
 ﻿@page "/adminPanel"
 @rendermode InteractiveServer
 @inject IArticleService articleService
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
 @using SchoolNewspaperBlazorApp.Components.Components
 @using SchoolNewspaperBlazorApp.Data
 @using SchoolNewspaperBlazorApp.Interfaces.Service
-
 <div class="admin-page">
 
     <section class="admin-header">
@@ -226,12 +227,9 @@
         }
     }
 
-</div>
-
-
+    </div>
 
 @code {
-
     public int view = 0;
     public List<Article> articleList = new List<Article>();
 
