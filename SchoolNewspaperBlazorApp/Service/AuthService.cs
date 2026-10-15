@@ -24,6 +24,10 @@ namespace SchoolNewspaperBlazorApp.Service
             };
             await _authRepository.AddUserAsync(auth);
         }
+        public async Task<bool> CheckIfRegisteredAsync(string login,string password)
+        {
+            return await _authRepository.CheckIfRegisteredAsync(login, password);
+        }
 
 
     }

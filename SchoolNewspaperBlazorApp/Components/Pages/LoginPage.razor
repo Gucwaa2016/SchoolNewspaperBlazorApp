@@ -1,4 +1,5 @@
 ﻿@page "/login"
+@using SchoolNewspaperBlazorApp.Interfaces.Service
 @rendermode InteractiveServer
 <PageTitle>Logowanie | Gazetka ETI</PageTitle>
 
@@ -86,7 +87,7 @@
 
                         <input id="login-email"
                                type="email"
-                               @bind="Login"
+                               @bind="Email"
                                @bind:event="oninput"
                                class="login-input"
                                placeholder="np. uczen@szkola.pl"
@@ -142,15 +143,17 @@
 
 
 @code {
-    public required string Login { get; set; } 
+    public required string Email { get; set; } 
     public required string Password { get; set; } 
     private bool isBusy;
     private string? errorMessage;
+    [Inject]
+    public IAuthService AuthService { get; set; }
     private async Task HandleLoginAsync()
     {
         if (isBusy) return;
 
-        if (string.IsNullOrWhiteSpace(Login) || string.IsNullOrWhiteSpace(Password))
+        if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
         {
             errorMessage = "Wpisz email i hasło.";
             return;
@@ -158,23 +161,19 @@
 
         isBusy = true;
         errorMessage = null;
-
-        try
+        var succces = await AuthService.CheckIfRegisteredAsync(Email, Password);
+        if(succces)
         {
-            // TODO: wywołaj metodę z IAuthService, np.:
-            // var ok = await authService.LoginAsync(Login, Password);
-            // if (!ok) { errorMessage = "Nieprawidłowy email lub hasło."; return; }
-            // Navigation.NavigateTo("/adminPanel");
-            await Task.CompletedTask;
+            errorMessage = "Udało się zalogować!";
+
         }
-        catch
+        else
         {
             errorMessage = "Nie udało się zalogować. Spróbuj ponownie.";
+
         }
-        finally
-        {
-            isBusy = false;
-        }
+
+
     }
 
 }

@@ -1,4 +1,5 @@
-﻿using SchoolNewspaperBlazorApp.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using SchoolNewspaperBlazorApp.Data;
 using SchoolNewspaperBlazorApp.Interfaces.Repository;
 
 namespace SchoolNewspaperBlazorApp.Repository
@@ -15,6 +16,20 @@ namespace SchoolNewspaperBlazorApp.Repository
         {
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
+        }
+        public async Task<bool> CheckIfRegisteredAsync(string login, string password)
+        {
+            var exist = await _context.Users
+                .AnyAsync(u => u.Email == login &&
+                u.Password == password);
+            if(exist)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
