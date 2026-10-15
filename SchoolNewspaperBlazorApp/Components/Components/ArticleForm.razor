@@ -6,12 +6,12 @@
 <div class="add-article-form">
     <h1 class="add-article-form__title">Dodaj artykuł</h1>
 
-@if (previewImage != null)
-{
-        <div class="image-preview">
-            <img src="@previewImage" alt="zdjęcie" />
+    @if (previewImage != null)
+    {
+        <div class="image-preview-wrap">
+            <img src="@previewImage" alt="zdjęcie" class="image-preview" />
         </div>
-}
+    }
 
     <label class="form-label">Zdjęcie</label>
     <InputFile OnChange="ChoosePhoto" accept="image/*" class="form-control mb-3" />
@@ -29,6 +29,7 @@
         <button type="submit" class="btn btn-primary w-100">Dodaj</button>
     </form>
 </div>
+
 
 @code {
     private string title = "";

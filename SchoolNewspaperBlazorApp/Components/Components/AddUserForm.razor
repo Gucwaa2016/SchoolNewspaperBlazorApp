@@ -1,17 +1,17 @@
 ﻿@using SchoolNewspaperBlazorApp.Interfaces.Service
-<form @onsubmit="() => AddUserAsync()" @onsubmit:preventDefault>
-    <label class="form-label">Login</label>
+<form @onsubmit="AddUserAsync" @onsubmit:preventDefault>
+    <label class="form-label">Tytuł</label>
     <input @bind="Login" class="form-control mb-3" placeholder="Login" />
 
     <label class="form-label">E-mail</label>
-    <input @bind="Email" class="form-control mb-3" rows="6" placeholder="E-Mail"></input>
+    <input @bind="Email" class="form-control mb-4" placeholder="E-Mail" />
 
-    <label class="form-label">Hasło</label>
-    <input @bind="Password" class="form-control mb-3" rows="6" placeholder="Hasło"></input>
-
+    <label class="form-label">Treść</label>
+    <input @bind="Password" class="form-control mb-4" placeholder="Hasło" />
 
     <button type="submit" class="btn btn-primary w-100">Dodaj</button>
 </form>
+
 
 @code {
     public required string Login { get; set; }
