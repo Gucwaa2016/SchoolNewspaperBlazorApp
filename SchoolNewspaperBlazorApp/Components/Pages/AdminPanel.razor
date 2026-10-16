@@ -184,7 +184,8 @@
                 {
                     <div class="article-panel">
                         <ArticleCard Articles="articleList"
-                                     permissions="true" />
+                                     permissions="true"
+                                     OnEdit="LoadArticleToEditAsync"  />
                     </div>
                 }
             </section>
@@ -203,7 +204,7 @@
                 </div>
 
                 <div class="admin-form-wrapper">
-                    <ArticleForm />
+                    <ArticleForm IsEdit="false" />
                 </div>
             </section>
         }
@@ -225,6 +226,11 @@
                 </div>
             </section>
         }
+        else if(view == 4)
+        {
+            <ArticleForm IsEdit="true" Article="articleToEdit" />
+
+        }
     }
 
     </div>
@@ -232,6 +238,7 @@
 @code {
     public int view = 0;
     public List<Article> articleList = new List<Article>();
+    public Article? articleToEdit;
 
     public void SetView(int view)
     {
@@ -241,5 +248,10 @@
     {
         articleList = await articleService.GetAllArticlesAsync();
         SetView(1);
+    }
+    public async Task LoadArticleToEditAsync(int id)
+    {
+        articleToEdit = await articleService.GetArticleByIdAsync(id);
+        SetView(4);
     }
 }
