@@ -84,7 +84,7 @@ namespace SchoolNewspaperBlazorApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Permission");
+                    b.ToTable("Permissions");
                 });
 
             modelBuilder.Entity("SchoolNewspaperBlazorApp.Data.User", b =>
@@ -131,7 +131,7 @@ namespace SchoolNewspaperBlazorApp.Migrations
 
                     b.HasIndex("PermissionId");
 
-                    b.ToTable("UserPermission");
+                    b.ToTable("UserPermissions");
                 });
 
             modelBuilder.Entity("SchoolNewspaperBlazorApp.Data.UserPermission", b =>

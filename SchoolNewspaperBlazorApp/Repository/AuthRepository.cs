@@ -20,7 +20,7 @@ namespace SchoolNewspaperBlazorApp.Repository
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
         }
-        public async Task<string> CheckIfRegisteredAsync(string login)
+        public async Task<User> CheckIfRegisteredAsync(string login)
         {
             await using var _context = await _contextFactory.CreateDbContextAsync();
 
@@ -28,7 +28,7 @@ namespace SchoolNewspaperBlazorApp.Repository
                 .FirstOrDefaultAsync(u => u.Email == login);
             if(user != null)
             {
-                return user.Password;
+                return user;
             }
             else
             {

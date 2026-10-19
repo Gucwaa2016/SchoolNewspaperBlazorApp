@@ -7,6 +7,7 @@ namespace SchoolNewspaperBlazorApp.Repository
     public class ArticleRepository : IArticleRepository
     {
         private readonly IDbContextFactory<NewspaperDbContext> _contextFactory;
+
         public ArticleRepository(IDbContextFactory<NewspaperDbContext> contextFactory)
         {
             _contextFactory = contextFactory;

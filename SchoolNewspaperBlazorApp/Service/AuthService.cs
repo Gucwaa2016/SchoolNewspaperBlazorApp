@@ -10,12 +10,16 @@ namespace SchoolNewspaperBlazorApp.Service
     public class AuthService : IAuthService
     {
         private readonly IAuthRepository _authRepository;
-        public AuthService(IAuthRepository authRepository)
+        private readonly IPermissionService _permissionService;
+        public AuthService(IAuthRepository authRepository, IPermissionService permissionService)
         {
             _authRepository = authRepository;
+            _permissionService = permissionService;
         }
         public async Task AddUserAsync(string login, string password, string email)
         {
+            bool hasPermission = await _permissionService.HasPermissionAsync(EnumPermissions.AddUser);
+            if (!hasPermission) return;
             var hasher = new PasswordHasher<string>();
             string passwordHash = hasher.HashPassword(null!, password);
             var auth = new User
@@ -27,26 +31,26 @@ namespace SchoolNewspaperBlazorApp.Service
             };
             await _authRepository.AddUserAsync(auth);
         }
-        public async Task<bool> CheckIfRegisteredAsync(string login,string password)
+        public async Task<int> CheckIfRegisteredAsync(string login,string password)
         {
             var hasher = new PasswordHasher<string>();
            // string passwordHash = hasher.HashPassword(null!, password);
             try
             {
-                var dbPass = await _authRepository.CheckIfRegisteredAsync(login);
-                var result = hasher.VerifyHashedPassword(login,dbPass,password);
+                var user = await _authRepository.CheckIfRegisteredAsync(login);
+                var result = hasher.VerifyHashedPassword(login,user.Password,password);
                 if(result == PasswordVerificationResult.Success)
                 {
-                    return true;
+                    return user.Id;
                 }
                 else
                 {
-                    return false; 
+                    return 0;
                 }
             }
             catch (Exception)
             {
-                return false;
+                return 0;
             }
 
         }

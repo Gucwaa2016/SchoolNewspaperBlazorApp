@@ -8,6 +8,7 @@ namespace SchoolNewspaperBlazorApp.Data
         EditArticle,
         DeleteArticle,
         AddUser,
-        ManageUser
+        ManageUser,
+        AddFile,
     }
 }

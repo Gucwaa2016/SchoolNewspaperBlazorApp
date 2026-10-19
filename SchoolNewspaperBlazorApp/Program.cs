@@ -28,11 +28,13 @@ namespace SchoolNewspaperBlazorApp
             builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
             builder.Services.AddScoped<IAuthRepository, AuthRepository>();
             builder.Services.AddScoped<IFileRepository, FileRepository>();
+            builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 
             //Services
             builder.Services.AddScoped<IArticleService, ArticleService>();
             builder.Services.AddScoped<IFileService, FileService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IPermissionService, PermissionService>();
 
             builder.Services.AddAuthentication(
                 CookieAuthenticationDefaults.AuthenticationScheme)
@@ -65,13 +67,14 @@ namespace SchoolNewspaperBlazorApp
                 var form = await context.Request.ReadFormAsync();
                 string email = form["Email"].ToString();
                 string password = form["Password"].ToString();
-                bool success = await authService.CheckIfRegisteredAsync(email, password);
-                if (!success)
+                int userId = await authService.CheckIfRegisteredAsync(email, password);
+                if (userId == 0)
                 {
                     return Results.Redirect("/");
                 }
                 var claims = new List<Claim>
                 {
+                    new Claim(ClaimTypes.NameIdentifier,userId.ToString()),
                     new Claim(ClaimTypes.Name,email)
                 };
                 var identity = new ClaimsIdentity(
