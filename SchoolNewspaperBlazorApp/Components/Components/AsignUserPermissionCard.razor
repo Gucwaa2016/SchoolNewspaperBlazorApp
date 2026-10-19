@@ -1,6 +1,8 @@
-﻿@using SchoolNewspaperBlazorApp.Interfaces.Service
-@inject IAuthService _authService;
-@foreach(var user in UsersEmail)
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using SchoolNewspaperBlazorApp.Interfaces.Service
+@using System.Security.Claims
+@inject IAuthService _authService
+@foreach(var user in Users)
 {
 <div class="article-card">
     <div class="article-card__body">
@@ -13,12 +15,12 @@
 }
 
 @code {
-    public Dictionary<int,string> UsersEmail { get; set; } = new Dictionary<int, string>();
+    public Dictionary<int,string> Users { get; set; } = new Dictionary<int, string>();
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)
         {
-            UsersEmail = await _authService.GetAllUsersAsync();
+            Users = await _authService.GetAllUsersAsync();
             StateHasChanged();
         }
     }
