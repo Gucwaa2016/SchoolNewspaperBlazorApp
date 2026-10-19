@@ -4,5 +4,6 @@
     {
         Task AddUserAsync(string login, string password, string email);
         Task<int> CheckIfRegisteredAsync(string login, string password);
+        Task<Dictionary<int, string>> GetAllUsersAsync();
     }
 }

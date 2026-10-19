@@ -1,0 +1,25 @@
+﻿@using SchoolNewspaperBlazorApp.Interfaces.Service
+@inject IAuthService _authService;
+@foreach(var user in UsersEmail)
+{
+<div class="article-card">
+    <div class="article-card__body">
+        <h5 class="article-card__title">@user</h5>
+            <button class="btn btn-sm btn-outline-danger">
+                Przejdz do panelu permisji
+            </button>
+        </div>
+    </div>
+}
+
+@code {
+    public Dictionary<int,string> UsersEmail { get; set; } = new Dictionary<int, string>();
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            UsersEmail = await _authService.GetAllUsersAsync();
+            StateHasChanged();
+        }
+    }
+}
