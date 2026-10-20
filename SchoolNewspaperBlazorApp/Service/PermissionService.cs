@@ -21,6 +21,10 @@ namespace SchoolNewspaperBlazorApp.Service
             var principal = authState.User;
             return await _permissionRepository.HasPermissionAsync(principal, permission);
         }
+        public async Task SavePermissionsAsync(List<EnumPermissions> permissions,int userId)
+        {
+           await _permissionRepository.SavePermissionsAsync(permissions, userId);
+        }
 
     }
 }
