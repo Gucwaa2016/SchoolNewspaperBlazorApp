@@ -12,6 +12,26 @@ namespace SchoolNewspaperBlazorApp.Repository
         {
             _contextFactory = contextFactory;
         }
+
+        public async Task<List<EnumPermissions>> GetUserPermissionsAsync(int userId)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+            return await context.UserPermissions
+                .Where(up => up.UserId == userId)
+                .Select(up => up.Permission.PermissionName)
+                .ToListAsync();
+        }
+        public async Task<Dictionary<EnumPermissions,bool>> GetAllUserPermissionsAsync(int userId)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+            var permissionsList = await GetUserPermissionsAsync(userId);
+            return Enum.GetValues<EnumPermissions>()
+        .ToDictionary(
+            permission => permission,
+            permission => permissionsList.Contains(permission)
+        );
+
+        }
         public async Task<bool> HasPermissionAsync(ClaimsPrincipal principal, EnumPermissions permission)
         {
 

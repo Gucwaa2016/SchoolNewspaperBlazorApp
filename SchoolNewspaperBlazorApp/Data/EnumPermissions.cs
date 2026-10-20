@@ -10,6 +10,6 @@ namespace SchoolNewspaperBlazorApp.Data
         AddUser,
         ManageUser,
         AddFile,
-        Master,
+        Master
     }
 }

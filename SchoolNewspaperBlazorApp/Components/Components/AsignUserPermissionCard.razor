@@ -52,14 +52,17 @@
 
     private int? ExpandedUserId { get; set; }
 
-    private Dictionary<EnumPermissions, bool> SelectedPermissions { get; set; } = new();
+    private Dictionary<EnumPermissions, bool> SelectedPermissions { get; set; }
+    = Enum.GetValues<EnumPermissions>()
+    .Where(p => p != EnumPermissions.Master)
+    .ToDictionary(p => p, p => false);
 
     protected override async Task OnInitializedAsync()
     {
         Users = await _authService.GetAllUsersAsync();
     }
 
-    private void TogglePermissions(int userId)
+    private async Task TogglePermissions(int userId)
     {
         if (ExpandedUserId == userId)
         {
@@ -67,10 +70,16 @@
             return;
         }
 
-        ExpandedUserId = userId;
+        var userPermissions = await _permissionService.GetUserPermissionsAsync(userId);
 
         SelectedPermissions = Enum.GetValues<EnumPermissions>()
-            .ToDictionary(permission => permission, _ => false);
+            .Where(p => p != EnumPermissions.Master)
+            .ToDictionary(
+                permission => permission,
+                permission => userPermissions.Contains(permission)
+            );
+        ExpandedUserId = userId;
+
     }
 
     private string GetPermissionName(EnumPermissions permission)

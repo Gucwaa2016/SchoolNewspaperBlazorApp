@@ -45,7 +45,8 @@
         </div>
 
         <div class="admin-actions">
-
+            @if(Permissions[EnumPermissions.EditArticle])
+            {
             <button type="button"
                     class="admin-action"
                     @onclick="LoadArticleAsync">
@@ -64,7 +65,9 @@
                     Otwórz artykuły <span>→</span>
                 </span>
             </button>
-
+            }
+            @if(Permissions[EnumPermissions.AddArticle])
+            {
             <button type="button"
                     class="admin-action"
                     @onclick="() => SetView(2)">
@@ -83,7 +86,9 @@
                     Utwórz artykuł <span>→</span>
                 </span>
             </button>
-
+            }
+            @if (Permissions[EnumPermissions.Master])
+            {
             <button type="button"
                     class="admin-action"
                     @onclick="() => SetView(3)">
@@ -102,9 +107,11 @@
                     Dodaj konto <span>→</span>
                 </span>
             </button>
-
-            <button type="button"
-                    class="admin-action"
+            }
+            @if (Permissions[EnumPermissions.Master])
+            {
+                <button type="button"
+                class="admin-action"
                     @onclick="() => SetView(5)">
 
                 <span class="admin-action__icon">✎</span>
@@ -121,6 +128,7 @@
                     Nadaj uprawnienia <span>→</span>
                 </span>
             </button>
+            }
 
         </div>
 
@@ -264,9 +272,18 @@
     </div>
 
 @code {
+    [Inject]
+    public IPermissionService permissionService { get; set; }
     public int view = 0;
     public List<Article> articleList = new List<Article>();
     public Article? articleToEdit;
+    private Dictionary<EnumPermissions, bool> Permissions 
+     = Enum.GetValues<EnumPermissions>()
+    .ToDictionary(p => p, p => false);
+    protected override async Task OnInitializedAsync()
+    {
+        Permissions = await permissionService.GetAllPermissionsAsync();
+    }
 
     public void SetView(int view)
     {
