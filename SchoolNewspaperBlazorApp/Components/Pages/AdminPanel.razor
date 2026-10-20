@@ -87,8 +87,8 @@
                 </span>
             </button>
             }
-            @if (Permissions[EnumPermissions.Master])
-            {
+            @if (Permissions[EnumPermissions.AddUser])
+            { 
             <button type="button"
                     class="admin-action"
                     @onclick="() => SetView(3)">
@@ -107,7 +107,7 @@
                     Dodaj konto <span>→</span>
                 </span>
             </button>
-            }
+            } 
             @if (Permissions[EnumPermissions.Master])
             {
                 <button type="button"

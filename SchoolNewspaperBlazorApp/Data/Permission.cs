@@ -6,6 +6,7 @@ namespace SchoolNewspaperBlazorApp.Data
     {
         public int Id { get; set; }
         public EnumPermissions PermissionName { get; set; }
+        public string PermissionViewName { get; set; } = string.Empty;
         public ICollection<UserPermission> Permissions { get; set; } = new List<UserPermission>();
     }
 }

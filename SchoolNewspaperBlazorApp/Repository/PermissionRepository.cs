@@ -67,7 +67,8 @@ namespace SchoolNewspaperBlazorApp.Repository
                 _context.UserPermissions.Add(new UserPermission
                 {
                     UserId = userId,
-                    PermissionId = permissionId
+                    PermissionId = permissionId,
+                    PermissionName = permission.ToString()
                 });
                 await _context.SaveChangesAsync();
             }
