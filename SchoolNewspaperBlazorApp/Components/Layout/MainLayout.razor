@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inherits LayoutComponentBase
 
 <div class="site-shell">
     <header class="site-header">
@@ -40,13 +41,24 @@
                     Wydarzenia
                 </NavLink>
             </nav>
-
-            <div class="site-header__actions">
-                <NavLink class="header-login" href="/login">
-                    <span>♙</span>
-                    Zaloguj się
-                </NavLink>
-            </div>
+            @if (!_isLoggedIn)
+            {
+                <div class="site-header__actions">
+                    <NavLink class="header-login" href="/login">
+                        <span>♙</span>
+                        Zaloguj się
+                    </NavLink>
+                </div>
+            }
+            else
+            {
+                <div class="site-header__actions">
+                    <NavLink class="header-login" href="/logout">
+                        <span>♙</span>
+                        Wyloguj się
+                    </NavLink>
+                </div>
+            }
 
         </div>
 
@@ -56,12 +68,14 @@
                     <span class="site-status__dot"></span>
                     <span>Twoje szkolne centrum informacji</span>
                 </div>
-
-                <NavLink class="admin-link" href="/adminPanel">
-                    <span class="admin-link__icon">⚙</span>
-                    Panel administratora
-                    <span>↗</span>
-                </NavLink>
+                @if (_isLoggedIn)
+                {
+                    <NavLink class="admin-link" href="/adminPanel">
+                        <span class="admin-link__icon">⚙</span>
+                        Panel administratora
+                        <span>↗</span>
+                    </NavLink>
+                }
             </div>
         </div>
     </header>
@@ -104,3 +118,16 @@
         </div>
     </footer>
 </div>
+@code
+{
+    [Inject]
+    public AuthenticationStateProvider Asp { get; set; }
+
+    private bool _isLoggedIn;
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await Asp.GetAuthenticationStateAsync();
+        var user = authState.User;
+        _isLoggedIn = user.Identity?.IsAuthenticated ?? false;
+    }
+}

@@ -3,7 +3,7 @@
 <div class="article-grid">
     @foreach (var article in Articles)
     {
-        if (permissions == true)
+        if (Permissions == true)
         {
             <div class="article-card">
                 <div class="article-card__img-wrap">
@@ -14,9 +14,12 @@
                     <p class="article-card__text">@article.Text</p>
                     <div class="article-card__footer">
                         <span class="article-card__author">@article.Author</span>
+                        @if(CanDelete)
+                        {
                         <button class="btn btn-sm btn-outline-danger" @onclick="() => RemoveArticleByIdAsync(article.Id)">
                             Usuń artykuł
                         </button>
+                        }
                         <button class="btn btn-sm" @onclick="() => SendDataToEdit(article.Id)">
                             Edytuj artykul
                         </button>
@@ -49,7 +52,9 @@
     [Parameter]
     public List<Article> Articles { get; set; } = new();
     [Parameter]
-    public bool permissions { get; set; }
+    public bool Permissions { get; set; }
+    [Parameter]
+    public bool CanDelete { get; set; }
     [Inject]
     public required IArticleService articleService { get; set; }
     [Inject]
@@ -58,10 +63,10 @@
     protected override async Task OnParametersSetAsync()
     {
         imageUrls.Clear();
-        foreach(var article in Articles)
+        foreach (var article in Articles)
         {
             var fileName = await fileService.GetFileNameByIdAsync(article.FileId);
-            if(!string.IsNullOrWhiteSpace(fileName))
+            if (!string.IsNullOrWhiteSpace(fileName))
             {
                 imageUrls[article.FileId] = $"/Images/{fileName}";
             }
@@ -73,11 +78,14 @@
     }
     public async Task RemoveArticleByIdAsync(int id)
     {
-        await articleService.RemoveArticleByIdAsync(id);
-        Article? article = Articles.FirstOrDefault(a => a.Id == id);
-        if(article != null)
+        var success = await articleService.RemoveArticleByIdAsync(id);
+        if (success)
         {
-            Articles.Remove(article);
+            Article? article = Articles.FirstOrDefault(a => a.Id == id);
+            if (article != null)
+            {
+                Articles.Remove(article);
+            }
         }
     }
     public async Task SendDataToEdit(int id)
