@@ -2,6 +2,7 @@
 using SchoolNewspaperBlazorApp.Data;
 using SchoolNewspaperBlazorApp.Data.Enums;
 using SchoolNewspaperBlazorApp.Interfaces.Repository;
+using System.Linq.Expressions;
 using System.Security.Claims;
 
 namespace SchoolNewspaperBlazorApp.Repository
@@ -52,33 +53,43 @@ namespace SchoolNewspaperBlazorApp.Repository
                  (up.Permission.PermissionName == permission ||
                   up.Permission.PermissionName == EnumPermissions.Master));
         }
-        public async Task SavePermissionsAsync(List<EnumPermissions> permissions, int userId)
+        public async Task<bool> SavePermissionsAsync(List<EnumPermissions> permissions, int userId)
         {
             await using var _context = await _contextFactory.CreateDbContextAsync();
-            var masterId = await _context.Permissions
-                .Where(p => p.PermissionName == EnumPermissions.Master)
-                .Select(p => p.Id)
-                .FirstOrDefaultAsync();
-            var existingPermissions = _context.UserPermissions
-                .Where(up => up.UserId == userId && up.PermissionId != masterId);
-
-            _context.UserPermissions.RemoveRange(existingPermissions);
-            foreach (var permission in permissions)
+            try
             {
-                var permissionId = await _context.Permissions
-                    .Where(p => p.PermissionName == permission)
+
+                var masterId = await _context.Permissions
+                    .Where(p => p.PermissionName == EnumPermissions.Master)
                     .Select(p => p.Id)
                     .FirstOrDefaultAsync();
-                if (permissionId == 0)
-                    continue;
-                _context.UserPermissions.Add(new UserPermission
+                var existingPermissions = _context.UserPermissions
+                    .Where(up => up.UserId == userId && up.PermissionId != masterId);
+
+                _context.UserPermissions.RemoveRange(existingPermissions);
+                foreach (var permission in permissions)
                 {
-                    UserId = userId,
-                    PermissionId = permissionId,
-                    PermissionName = permission.ToString()
-                });
-                await _context.SaveChangesAsync();
+                    var permissionId = await _context.Permissions
+                        .Where(p => p.PermissionName == permission)
+                        .Select(p => p.Id)
+                        .FirstOrDefaultAsync();
+                    if (permissionId == 0)
+                        continue;
+                    _context.UserPermissions.Add(new UserPermission
+                    {
+                        UserId = userId,
+                        PermissionId = permissionId,
+                        PermissionName = permission.ToString()
+                    });
+                    await _context.SaveChangesAsync();
+                }
+                    return true;
             }
+            catch (Exception)
+            {
+                return false;
+            }
+
         }
     }
 }

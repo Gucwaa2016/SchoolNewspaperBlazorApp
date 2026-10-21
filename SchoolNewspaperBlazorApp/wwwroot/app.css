@@ -2094,3 +2094,78 @@ textarea.form-control {
         transition-duration: .01ms !important;
     }
 }
+
+.notification-window {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    z-index: 9999;
+    width: fit-content;
+    min-width: 200px;
+    max-width: 450px;
+    padding: 20px 24px;
+    color: #ffffff;
+    background-color: #18181b;
+    border-left: 6px solid #38bdf8;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    animation: notification-slide-in 0.35s ease-out;
+}
+
+    .notification-window h1 {
+        margin: 0;
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 1.5;
+        letter-spacing: 0.2px;
+        overflow-wrap: anywhere;
+    }
+
+    /* Sukces — zielony */
+    .notification-window.success {
+        background-color: #052e16;
+        border-left-color: #22c55e;
+    }
+
+    /* Niepowodzenie — żółty */
+    .notification-window.failure {
+        background-color: #1c1c1e;
+        border-left-color: #fbbf24;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35), 0 0 12px rgba(251, 191, 36, 0.12);
+    }
+
+
+    /* Błąd — czerwony */
+    .notification-window.error {
+        background-color: #450a0a;
+        border-left-color: #ef4444;
+    }
+
+@keyframes notification-slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@media (max-width: 480px) {
+    .notification-window {
+        top: 15px;
+        right: 15px;
+        left: 15px;
+        width: auto;
+        min-width: 0;
+        max-width: none;
+        padding: 16px 18px;
+    }
+
+        .notification-window h1 {
+            font-size: 16px;
+        }
+}

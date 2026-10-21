@@ -5,7 +5,7 @@
 @inject INotificationService _notifyService
 @if(currentNotification != null)
 {
-<div class="notification-window">
+    <div class="notification-window @GetNotificationClass()">
     <h1>@currentNotification.Message</h1>
 </div>
 }
@@ -17,6 +17,16 @@
     protected override void OnInitialized()
     {
         _notifyService.OnChange += HandleChange;
+    }
+    private string GetNotificationClass()
+    {
+        return currentNotification?.Type switch
+        {
+            EnumNotificationType.Success => "success",
+            EnumNotificationType.Failure => "failure",
+            EnumNotificationType.Error => "error",
+            _ => ""
+        };
     }
     private void HandleChange()
     {

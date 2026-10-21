@@ -10,11 +10,13 @@ namespace SchoolNewspaperBlazorApp.Service
     {
         private readonly IFileRepository _fileRepository;
         private readonly IPermissionService _permissionService;
+        private readonly INotificationService _notificationService;
         private readonly string _uploadPath;
-        public FileService(IFileRepository fileRepository, IWebHostEnvironment environment,IPermissionService permissionService)
+        public FileService(IFileRepository fileRepository, IWebHostEnvironment environment,IPermissionService permissionService,INotificationService notificationService)
         {
             _fileRepository = fileRepository;
             _permissionService = permissionService;
+            _notificationService = notificationService;
             _uploadPath = Path.Combine(environment.ContentRootPath, "Images");
         }
         public async Task<string> GetPreviewAsync(IBrowserFile file)
@@ -30,6 +32,7 @@ namespace SchoolNewspaperBlazorApp.Service
             bool hasPermission = await _permissionService.HasPermissionAsync(EnumPermissions.AddArticle);
             if (!hasPermission)
             {
+                _notificationService.Show("Brak uprawnien!",EnumNotificationType.Failure);
                 throw new Exception("Brak uprawnien!");
             }
             //Tworzenie folderu

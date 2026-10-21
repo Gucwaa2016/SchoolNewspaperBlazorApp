@@ -1,7 +1,9 @@
 ﻿@using SchoolNewspaperBlazorApp.Data
+@using SchoolNewspaperBlazorApp.Data.Enums
 @using SchoolNewspaperBlazorApp.Interfaces.Service
 @inject IArticleService articleService
 @inject IFileService fileService
+@inject INotificationService notificationService
 
 <div class="add-article-form">
     <h1 class="add-article-form__title">Dodaj artykuł</h1>
@@ -13,7 +15,6 @@
         </div>
     }
 
-    <h1>@errorMessage</h1>
     <label class="form-label">Zdjęcie</label>
     <InputFile OnChange="ChoosePhoto" accept="image/*" class="form-control mb-3" />
 
@@ -41,7 +42,6 @@
     private string text = "";
     private string author = "";
     private string? previewImage;
-    private string? errorMessage;
     IBrowserFile? file;
     protected override void OnParametersSet()
     {
@@ -56,7 +56,7 @@
     {
         if(!IsEdit && file == null)
         {
-            errorMessage = "Dodajac artykuł musisz dodac zdjecie!";
+            notificationService.Show("Artykuł musi zawierac zdjecie głowne!", EnumNotificationType.Failure);
             return;
         }
         int id = 0;

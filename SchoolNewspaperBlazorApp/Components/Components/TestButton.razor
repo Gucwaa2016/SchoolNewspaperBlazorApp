@@ -6,9 +6,8 @@
 
     public async Task AddUser()
     {
-        string login = "admin123";
         string password = "admin123";
         string email = "admin123@admin.pl";
-        await authService.AddUserAsync(login,password,email);
+        await authService.AddUserAsync(password,email);
     }
 }

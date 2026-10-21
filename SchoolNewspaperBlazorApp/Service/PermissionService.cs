@@ -9,11 +9,13 @@ namespace SchoolNewspaperBlazorApp.Service
     public class PermissionService : IPermissionService
     {
         private readonly IPermissionRepository _permissionRepository;
+        private readonly INotificationService _notificationService;
         private readonly AuthenticationStateProvider _asp;
-        public PermissionService(IPermissionRepository permissionRepository, AuthenticationStateProvider asp)
+        public PermissionService(IPermissionRepository permissionRepository, AuthenticationStateProvider asp, INotificationService notificationService  )
         {
             _permissionRepository = permissionRepository;
             _asp = asp;
+            _notificationService = notificationService;
         }
 
         public async Task<List<EnumPermissions>> GetUserPermissionsAsync(int userId)
@@ -34,8 +36,22 @@ namespace SchoolNewspaperBlazorApp.Service
         public async Task SavePermissionsAsync(List<EnumPermissions> permissions, int userId)
         {
             bool hasPermission = await HasPermissionAsync(EnumPermissions.Master);
-            if (!hasPermission) return;
-            await _permissionRepository.SavePermissionsAsync(permissions, userId);
+            if (!hasPermission)
+            {
+                _notificationService.Show("Brak uprawnień!", EnumNotificationType.Failure);
+                return;
+            }
+            var succces = await _permissionRepository.SavePermissionsAsync(permissions, userId);
+            if(succces)
+            {
+                _notificationService.Show("Nadano uprawnienia!", EnumNotificationType.Success);
+
+            }
+            else
+            {
+                _notificationService.Show("Bład poczasz nadawania uprawnień! Skontaktuj się z obsługa techniczną!", EnumNotificationType.Failure);
+
+            }
         }
         public async Task<int> GetUserId()
         {
