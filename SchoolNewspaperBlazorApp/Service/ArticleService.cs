@@ -20,6 +20,16 @@ namespace SchoolNewspaperBlazorApp.Service
         }
         public async Task AddArticleAsync(string title, string text, string author,int fileId)
         {
+            if(string.IsNullOrEmpty(title))
+            {
+                _notificationService.Show("Tytuł nie może być pusty!", EnumNotificationType.Failure);
+                return;
+            }
+            if(string.IsNullOrEmpty(text))
+            {
+                _notificationService.Show("Treść nie może być pusta!", EnumNotificationType.Failure);
+                return;
+            }
             bool hasPermission = await _permissionService.HasPermissionAsync(EnumPermissions.AddArticle);
             if (!hasPermission)
             {
@@ -46,6 +56,16 @@ namespace SchoolNewspaperBlazorApp.Service
         }
         public async Task UpdateArticleByIdAsync(int id,string title,string text,string author, int fileId)
         {
+            if (string.IsNullOrEmpty(title))
+            {
+                _notificationService.Show("Tytuł nie może być pusty!", EnumNotificationType.Failure);
+                return;
+            }
+            if (string.IsNullOrEmpty(text))
+            {
+                _notificationService.Show("Treść nie może być pusta!", EnumNotificationType.Failure);
+                return;
+            }
             bool hasPermission = await _permissionService.HasPermissionAsync(EnumPermissions.EditArticle);
             if (!hasPermission)
             {

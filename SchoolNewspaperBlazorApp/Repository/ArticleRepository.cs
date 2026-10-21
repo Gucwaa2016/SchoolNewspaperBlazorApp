@@ -16,6 +16,14 @@ namespace SchoolNewspaperBlazorApp.Repository
         public async Task<bool> UpdateArticleByIdAsync(Article article)
         {
             await using var _context = await _contextFactory.CreateDbContextAsync();
+            if (string.IsNullOrWhiteSpace(article.Title))
+            {
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(article.Text))
+            {
+                return false;
+            }
             try
             {
 
@@ -45,8 +53,17 @@ namespace SchoolNewspaperBlazorApp.Repository
         public async Task<bool> AddArticleAsync(Article article)
         {
             await using var _context = await _contextFactory.CreateDbContextAsync();
+            if(string.IsNullOrWhiteSpace(article.Title))
+            {
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(article.Text))
+            {
+                return false;
+            }
             try
             {
+                
                 await _context.Articles.AddAsync(article);
                 await _context.SaveChangesAsync();
             }
