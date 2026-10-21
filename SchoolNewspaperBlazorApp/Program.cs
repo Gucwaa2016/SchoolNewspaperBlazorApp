@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using SchoolNewspaperBlazorApp.Components;
 using SchoolNewspaperBlazorApp.Data;
+using SchoolNewspaperBlazorApp.Data.Enums;
 using SchoolNewspaperBlazorApp.Interfaces.Repository;
 using SchoolNewspaperBlazorApp.Interfaces.Service;
 using SchoolNewspaperBlazorApp.Repository;
@@ -35,6 +36,7 @@ namespace SchoolNewspaperBlazorApp
             builder.Services.AddScoped<IFileService, FileService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IPermissionService, PermissionService>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
 
             builder.Services.AddAuthentication(
                 CookieAuthenticationDefaults.AuthenticationScheme)
@@ -62,7 +64,8 @@ namespace SchoolNewspaperBlazorApp
             }
             app.MapPost("/auth/login", async (
                 HttpContext context,
-                IAuthService authService) =>
+                IAuthService authService
+                ) =>
             {
                 var form = await context.Request.ReadFormAsync();
                 string email = form["Email"].ToString();
@@ -70,7 +73,7 @@ namespace SchoolNewspaperBlazorApp
                 int userId = await authService.CheckIfRegisteredAsync(email, password);
                 if (userId == 0)
                 {
-                    return Results.Redirect("/");
+                    return Results.Redirect("/login?notification=loginError");
                 }
                 var claims = new List<Claim>
                 {
@@ -83,7 +86,7 @@ namespace SchoolNewspaperBlazorApp
                 var principal = new ClaimsPrincipal(identity);
                 await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                     principal);
-                return Results.Redirect("/adminPanel");
+                return Results.Redirect("/adminPanel?notification=login");
             });
             var imagesPath = Path.Combine(
                 builder.Environment.ContentRootPath,

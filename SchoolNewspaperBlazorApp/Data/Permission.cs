@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using SchoolNewspaperBlazorApp.Data.Enums;
+using System.Runtime.Serialization;
 
 namespace SchoolNewspaperBlazorApp.Data
 {

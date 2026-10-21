@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SchoolNewspaperBlazorApp.Data;
+using SchoolNewspaperBlazorApp.Data.Enums;
 using SchoolNewspaperBlazorApp.Interfaces.Repository;
 using SchoolNewspaperBlazorApp.Interfaces.Service;
 
@@ -10,15 +11,21 @@ namespace SchoolNewspaperBlazorApp.Service
     {
         private readonly IArticleRepository _articleRepository;
         private readonly IPermissionService _permissionService;
-        public ArticleService(IArticleRepository articleRepository, IPermissionService permissionService)
+        private readonly INotificationService _notificationService;
+        public ArticleService(IArticleRepository articleRepository, IPermissionService permissionService,INotificationService notificationService)
         {
             _articleRepository = articleRepository;
             _permissionService = permissionService;
+            _notificationService = notificationService;
         }
         public async Task AddArticleAsync(string title, string text, string author,int fileId)
         {
             bool hasPermission = await _permissionService.HasPermissionAsync(EnumPermissions.AddArticle);
-            if (!hasPermission) return;
+            if (!hasPermission)
+            {
+                _notificationService.Show("Brak uprawnień!", EnumNotificationType.Failure);
+                return;
+            }
             var article = new Article
             {
                 Title = title,
@@ -27,7 +34,15 @@ namespace SchoolNewspaperBlazorApp.Service
                 PublishDate = DateTime.Now,
                 FileId = fileId
             };
-            await _articleRepository.AddArticleAsync(article);
+            var succces = await _articleRepository.AddArticleAsync(article);
+            if(succces)
+            {
+                _notificationService.Show("Pomyślnie dodano artykuł!", EnumNotificationType.Success);
+            }
+            else
+            {
+                _notificationService.Show("Podczas dodawania artykułu wystąpił bład! Skontaktuj się z obłusga techniczna!", EnumNotificationType.Error);
+            }
         }
         public async Task UpdateArticleByIdAsync(int id,string title,string text,string author, int fileId)
         {

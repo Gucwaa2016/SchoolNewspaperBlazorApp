@@ -4,6 +4,7 @@ using SchoolNewspaperBlazorApp.Interfaces.Repository;
 using SchoolNewspaperBlazorApp.Interfaces.Service;
 using SchoolNewspaperBlazorApp.Repository;
 using Microsoft.AspNetCore.Identity;
+using SchoolNewspaperBlazorApp.Data.Enums;
 
 namespace SchoolNewspaperBlazorApp.Service
 {
@@ -48,6 +49,7 @@ namespace SchoolNewspaperBlazorApp.Service
                 }
                 else
                 {
+
                     return 0;
                 }
             }
