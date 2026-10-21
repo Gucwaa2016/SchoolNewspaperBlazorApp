@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using SchoolNewspaperBlazorApp.Data;
 using SchoolNewspaperBlazorApp.Data.Enums;
 
@@ -40,6 +42,31 @@ namespace SchoolNewspaperBlazorApp.Data.Seeders
 
             await context.SaveChangesAsync();
 
+            const string adminEmail = "admin@admin.pl";
+            const string adminPassword = "admin";
+
+            var admin = await context.Users
+                .FirstOrDefaultAsync(u => u.Email == adminEmail);
+
+            if (admin == null)
+            {
+                var hasher = new PasswordHasher<string>();
+
+                string passwordHash = hasher.HashPassword(
+                    null!,
+                    adminPassword);
+
+                admin = new User
+                {
+                    Email = adminEmail,
+                    Password = passwordHash,
+                    RegisterDate = DateTime.Now
+                };
+
+                context.Users.Add(admin);
+                await context.SaveChangesAsync();
+            }
+
             int masterPermissionId = await context.Permissions
                 .Where(p => p.PermissionName == EnumPermissions.Master)
                 .Select(p => p.Id)
@@ -47,14 +74,14 @@ namespace SchoolNewspaperBlazorApp.Data.Seeders
 
             bool masterExists = await context.UserPermissions
                 .AnyAsync(up =>
-                    up.UserId == 1 &&
+                    up.UserId == admin.Id &&
                     up.PermissionId == masterPermissionId);
 
             if (!masterExists)
             {
                 context.UserPermissions.Add(new UserPermission
                 {
-                    UserId = 1,
+                    UserId = admin.Id,
                     PermissionId = masterPermissionId,
                     PermissionName = "Administrator"
                 });
