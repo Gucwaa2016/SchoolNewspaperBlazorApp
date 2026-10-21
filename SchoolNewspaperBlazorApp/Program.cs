@@ -6,6 +6,7 @@ using Microsoft.Extensions.FileProviders;
 using SchoolNewspaperBlazorApp.Components;
 using SchoolNewspaperBlazorApp.Data;
 using SchoolNewspaperBlazorApp.Data.Enums;
+using SchoolNewspaperBlazorApp.Data.Seeders;
 using SchoolNewspaperBlazorApp.Interfaces.Repository;
 using SchoolNewspaperBlazorApp.Interfaces.Service;
 using SchoolNewspaperBlazorApp.Repository;
@@ -16,7 +17,7 @@ namespace SchoolNewspaperBlazorApp
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddRazorComponents()
@@ -54,6 +55,14 @@ namespace SchoolNewspaperBlazorApp
             builder.Services.AddCascadingAuthenticationState();
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var contextFactory = scope.ServiceProvider
+                    .GetRequiredService<IDbContextFactory<NewspaperDbContext>>();
+
+                await PermissionSeeder.SeedAsync(contextFactory);
+            }
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
