@@ -7,7 +7,7 @@
         {
             <div class="article-card">
                 <div class="article-card__img-wrap">
-                    <img src="@GetImageUrl(article.FileId)" class="article-card__img" alt="@article.Title" loading="lazy">
+                    <img src="@GetImageUrl(article.MainImageId)" class="article-card__img" alt="@article.Title" loading="lazy">
                 </div>
                 <div class="article-card__body">
                     <h5 class="article-card__title">@article.Title</h5>
@@ -31,7 +31,7 @@
         {
             <NavLink class="article-card article-card--link" href="@($"/article/{article.Id}")">
                 <div class="article-card__img-wrap">
-                    <img src="@GetImageUrl(article.FileId)" class="article-card__img" alt="@article.Title" loading="lazy">
+                    <img src="@GetImageUrl(article.MainImageId)" class="article-card__img" alt="@article.Title" loading="lazy">
                 </div>
                 <div class="article-card__body">
                     <h5 class="article-card__title">@article.Title</h5>
@@ -65,10 +65,10 @@
         imageUrls.Clear();
         foreach (var article in Articles)
         {
-            var fileName = await fileService.GetFileNameByIdAsync(article.FileId);
+            var fileName = await fileService.GetFileNameByIdAsync(article.MainImageId);
             if (!string.IsNullOrWhiteSpace(fileName))
             {
-                imageUrls[article.FileId] = $"/Images/{fileName}";
+                imageUrls[article.MainImageId] = $"/Images/{fileName}";
             }
         }
     }

@@ -18,23 +18,23 @@ namespace SchoolNewspaperBlazorApp.Service
             _permissionService = permissionService;
             _notificationService = notificationService;
         }
-        public async Task AddArticleAsync(string title, string text, string author,int fileId)
+        public async Task<int> AddArticleAsync(string title, string text, string author,int fileId)
         {
             if(string.IsNullOrEmpty(title))
             {
                 _notificationService.Show("Tytuł nie może być pusty!", EnumNotificationType.Failure);
-                return;
+                return 0;
             }
             if(string.IsNullOrEmpty(text))
             {
                 _notificationService.Show("Treść nie może być pusta!", EnumNotificationType.Failure);
-                return;
+                return 0;
             }
             bool hasPermission = await _permissionService.HasPermissionAsync(EnumPermissions.AddArticle);
             if (!hasPermission)
             {
                 _notificationService.Show("Brak uprawnień!", EnumNotificationType.Failure);
-                return;
+                return 0;
             }
             var article = new Article
             {
@@ -42,10 +42,10 @@ namespace SchoolNewspaperBlazorApp.Service
                 Text = text,
                 Author = author,
                 PublishDate = DateTime.Now,
-                FileId = fileId
+                MainImageId  = fileId
             };
-            var succces = await _articleRepository.AddArticleAsync(article);
-            if(succces)
+            var articleId = await _articleRepository.AddArticleAsync(article);
+            if(articleId != 0)
             {
                 _notificationService.Show("Pomyślnie dodano artykuł!", EnumNotificationType.Success);
             }
@@ -53,6 +53,7 @@ namespace SchoolNewspaperBlazorApp.Service
             {
                 _notificationService.Show("Podczas dodawania artykułu wystąpił bład! Skontaktuj się z obłusga techniczna!", EnumNotificationType.Error);
             }
+            return articleId;
         }
         public async Task UpdateArticleByIdAsync(int id,string title,string text,string author, int fileId)
         {
@@ -78,10 +79,10 @@ namespace SchoolNewspaperBlazorApp.Service
                 Title = title,
                 Text = text,
                 Author = author,
-                FileId = fileId
+                MainImageId = fileId
             };
            var success =  await _articleRepository.UpdateArticleByIdAsync(article);
-            if(success)
+            if(success != 0)
             {
                 _notificationService.Show("Pomyślnie zaaktualizowano artykuł!", EnumNotificationType.Success);
             }

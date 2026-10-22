@@ -34,7 +34,7 @@ namespace SchoolNewspaperBlazorApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("FileId")
+                    b.Property<int>("MainImageId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("PublishDate")
@@ -58,6 +58,9 @@ namespace SchoolNewspaperBlazorApp.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ArticleId")
+                        .HasColumnType("int");
+
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -65,6 +68,9 @@ namespace SchoolNewspaperBlazorApp.Migrations
                     b.Property<string>("FileType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsMainImage")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 

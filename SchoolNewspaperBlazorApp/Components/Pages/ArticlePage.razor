@@ -47,7 +47,7 @@
 
         if (article != null)
         {
-            var fileName = await fileService.GetFileNameByIdAsync(article.FileId);
+            var fileName = await fileService.GetFileNameByIdAsync(article.MainImageId);
             if (!string.IsNullOrWhiteSpace(fileName))
             {
                 imageUrl = $"/Images/{fileName}";

@@ -27,7 +27,7 @@ namespace SchoolNewspaperBlazorApp.Service
             byte[] bytes = memoryStream.ToArray();
             return $"data:{file.ContentType};base64,{Convert.ToBase64String(bytes)}";
         }
-        public async Task<int> UploadImage(IBrowserFile file)
+        public async Task<int> UploadImage(IBrowserFile file,int? ArticleId = null)
         {
             bool hasPermission = await _permissionService.HasPermissionAsync(EnumPermissions.AddArticle);
             if (!hasPermission)
@@ -55,7 +55,9 @@ namespace SchoolNewspaperBlazorApp.Service
             {
                 Id = id,
                 FileName = fileName,
-                FileType = extension
+                FileType = extension,
+                ArticleId = ArticleId,
+                IsMainImage = ArticleId == null 
             };
             await _fileRepository.AddFileAsync(mediaFile);
 

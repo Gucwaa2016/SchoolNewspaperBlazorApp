@@ -13,53 +13,55 @@ namespace SchoolNewspaperBlazorApp.Repository
             _contextFactory = contextFactory;
         }
 
-        public async Task<bool> UpdateArticleByIdAsync(Article article)
+        public async Task<int> UpdateArticleByIdAsync(Article article)
         {
             await using var _context = await _contextFactory.CreateDbContextAsync();
             if (string.IsNullOrWhiteSpace(article.Title))
             {
-                return false;
+                return 0;
             }
             if (string.IsNullOrWhiteSpace(article.Text))
             {
-                return false;
+                return 0;
             }
-            try
-            {
+
+                try
+                {
 
                 var existingArticle = await _context.Articles.FirstOrDefaultAsync(a => a.Id == article.Id);
                 if (existingArticle == null)
                 {
-                    return false;
-                }
-                if (article.FileId != 0)
+                        return 0;
+
+                    }
+                    if (article.MainImageId != 0)
                 {
-                    existingArticle.FileId = article.FileId;
+                    existingArticle.MainImageId = article.MainImageId;
                 }
                 existingArticle.Title = article.Title;
                 existingArticle.Text = article.Text;
                 existingArticle.Author = article.Author;
 
                 await _context.SaveChangesAsync();
-                return true;
+                return article.Id;
             }
             catch (Exception)
             {
-                return false;
+                return 0; 
             }
 
 
         }
-        public async Task<bool> AddArticleAsync(Article article)
+        public async Task<int> AddArticleAsync(Article article)
         {
             await using var _context = await _contextFactory.CreateDbContextAsync();
             if(string.IsNullOrWhiteSpace(article.Title))
             {
-                return false;
+                return 0;
             }
             if (string.IsNullOrWhiteSpace(article.Text))
             {
-                return false;
+                return 0;
             }
             try
             {
@@ -69,9 +71,9 @@ namespace SchoolNewspaperBlazorApp.Repository
             }
             catch (Exception)
             {
-                return false;
+                return 0;
             }
-            return true;
+            return article.Id;
         }
         public async Task<List<Article>> GetAllArticlesAsync()
         {
