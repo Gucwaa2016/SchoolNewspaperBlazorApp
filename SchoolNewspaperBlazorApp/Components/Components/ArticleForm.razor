@@ -1,0 +1,219 @@
+﻿
+@using Microsoft.AspNetCore.Components.Forms
+@using SchoolNewspaperBlazorApp.Data
+@using SchoolNewspaperBlazorApp.Data.Enums
+@using SchoolNewspaperBlazorApp.Interfaces.Service
+
+@inject IArticleService articleService
+@inject IFileService fileService
+@inject INotificationService notificationService
+
+<div class="add-article-form">
+    <h1 class="add-article-form__title">
+        @(IsEdit ? "Edytuj artykuł" : "Dodaj artykuł")
+    </h1>
+
+    @if (previewImage != null)
+    {
+        <div class="image-preview-wrap">
+            <img src="@previewImage"
+                 alt="Zdjęcie główne"
+                 class="image-preview" />
+        </div>
+    }
+
+    <form @onsubmit="SubmitForm" @onsubmit:preventDefault>
+
+        <label class="form-label">Zdjęcie główne *</label>
+
+        <InputFile OnChange="ChoosePhoto"
+                   accept="image/*"
+                   class="form-control mb-3" />
+
+        <label class="form-label">Tytuł *</label>
+
+        <input @bind="title"
+               class="form-control mb-3"
+               placeholder="Wpisz tytuł..."
+               required />
+
+        <label class="form-label">Treść *</label>
+
+        <textarea @bind="text"
+                  class="form-control mb-3"
+                  rows="6"
+                  placeholder="Treść artykułu..."
+                  required>
+        </textarea>
+
+        <label class="form-label">Autor *</label>
+
+        <input @bind="author"
+               class="form-control mb-3"
+               placeholder="Imię i nazwisko"
+               required />
+
+        <label class="form-label">Kategoria artykułu *</label>
+
+        <select @bind="category"
+                class="form-select mb-2"
+                required>
+            <option value="">-- Wybierz kategorię --</option>
+
+            <option value="@EnumArticleCategory.Nowosci">
+                Nowości
+            </option>
+
+            <option value="@EnumArticleCategory.Wydarzenia">
+                Wydarzenia
+            </option>
+
+            <option value="@EnumArticleCategory.Ogloszenia">
+                Ogłoszenia
+            </option>
+        </select>
+
+        @if (categoryError)
+        {
+            <div class="category-validation-error">
+                Wybierz kategorię artykułu przed zapisaniem.
+            </div>
+        }
+
+        @if (!IsEdit)
+        {
+            <label class="form-label mt-3">
+                Zdjęcia do galerii
+            </label>
+
+            <InputFile OnChange="ChooseGalleryPhotos"
+                       accept="image/*"
+                       multiple
+                       class="form-control mb-3" />
+        }
+
+        <button type="submit"
+                class="btn btn-primary w-100">
+            @(IsEdit ? "Zatwierdź edycję" : "Dodaj artykuł")
+        </button>
+    </form>
+</div>
+
+@code {
+    [Parameter]
+    public bool IsEdit { get; set; }
+
+    [Parameter]
+    public Article? Article { get; set; }
+
+    private string title = "";
+    private string text = "";
+    private string author = "";
+
+    private EnumArticleCategory? category = null;
+
+    private bool categoryError = false;
+
+    private string? previewImage;
+    private IBrowserFile? file;
+
+    private List<IBrowserFile> galleryFiles = new();
+
+    protected override void OnParametersSet()
+    {
+        if (IsEdit && Article != null)
+        {
+            title = Article.Title;
+            text = Article.Text;
+            author = Article.Author;
+            category = Article.Category;
+        }
+        else if (!IsEdit)
+        {
+            title = "";
+            text = "";
+            author = "";
+
+            category = null;
+            categoryError = false;
+
+            file = null;
+            previewImage = null;
+            galleryFiles.Clear();
+        }
+    }
+
+    private void ChooseGalleryPhotos(InputFileChangeEventArgs e)
+    {
+        galleryFiles = e.GetMultipleFiles(50).ToList();
+    }
+
+    private async Task SubmitForm()
+    {
+        // Kategoria jest obowiązkowa.
+        if (category == null ||
+            !Enum.IsDefined(typeof(EnumArticleCategory), category.Value))
+        {
+            categoryError = true;
+
+            notificationService.Show(
+                "Wybierz kategorię artykułu!",
+                EnumNotificationType.Failure);
+
+            return;
+        }
+
+        categoryError = false;
+
+        // Zdjęcie główne jest obowiązkowe przy tworzeniu artykułu.
+        if (!IsEdit && file == null)
+        {
+            notificationService.Show(
+                "Artykuł musi zawierać zdjęcie główne!",
+                EnumNotificationType.Failure);
+
+            return;
+        }
+
+        int mainImageId = Article?.MainImageId ?? 0;
+
+        if (file != null)
+        {
+            mainImageId = await fileService.UploadImage(file);
+        }
+
+        if (IsEdit && Article != null)
+        {
+            await articleService.UpdateArticleByIdAsync(
+                Article.Id,
+                title,
+                text,
+                author,
+                mainImageId,
+                category.Value);
+        }
+        else
+        {
+            int articleId = await articleService.AddArticleAsync(
+                title,
+                text,
+                author,
+                mainImageId,
+                category.Value);
+
+            if (articleId > 0)
+            {
+                foreach (var image in galleryFiles)
+                {
+                    await fileService.UploadImage(image, articleId);
+                }
+            }
+        }
+    }
+
+    private async Task ChoosePhoto(InputFileChangeEventArgs e)
+    {
+        file = e.File;
+        previewImage = await fileService.GetPreviewAsync(file);
+    }
+}
