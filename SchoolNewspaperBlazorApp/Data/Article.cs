@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using SchoolNewspaperBlazorApp.Data.Enums;
 
 namespace SchoolNewspaperBlazorApp.Data
 {
@@ -10,6 +11,7 @@ namespace SchoolNewspaperBlazorApp.Data
         public required string Author { get; set; }
         public DateTime PublishDate { get; set; }
         public int MainImageId { get; set; }
+        public EnumArticleCategory Category { get; set; }
 
     }
 

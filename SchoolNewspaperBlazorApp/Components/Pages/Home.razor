@@ -1,13 +1,19 @@
-﻿@page "/"
+﻿
+@page "/"
+
 @using SchoolNewspaperBlazorApp.Components.Components
 @using SchoolNewspaperBlazorApp.Data
+@using SchoolNewspaperBlazorApp.Data.Enums
 @using SchoolNewspaperBlazorApp.Interfaces.Service
-@inject IArticleService articleService;
+
+@inject IArticleService articleService
 
 <PageTitle>Gazetka ETI</PageTitle>
 
 <section class="home-hero">
-    <span class="home-hero__eyebrow">Szkolny portal informacyjny</span>
+    <span class="home-hero__eyebrow">
+        Szkolny portal informacyjny
+    </span>
 
     <h1>Wszystko, co dzieje się w naszej szkole.</h1>
 
@@ -28,14 +34,78 @@
     </div>
 </div>
 
-<ArticleCard Articles="articles" permissions="false" />
+<div class="home-category-tabs">
+    <button type="button"
+            class="@GetTabClass(null)"
+            @onclick="() => SelectCategory(null)">
+        Wszystkie
+    </button>
 
+    <button type="button"
+            class="@GetTabClass(EnumArticleCategory.Nowosci)"
+            @onclick="() => SelectCategory(EnumArticleCategory.Nowosci)">
+        Nowości
+    </button>
 
-@code 
+    <button type="button"
+            class="@GetTabClass(EnumArticleCategory.Wydarzenia)"
+            @onclick="() => SelectCategory(EnumArticleCategory.Wydarzenia)">
+        Wydarzenia
+    </button>
+
+    <button type="button"
+            class="@GetTabClass(EnumArticleCategory.Ogloszenia)"
+            @onclick="() => SelectCategory(EnumArticleCategory.Ogloszenia)">
+        Ogłoszenia
+    </button>
+</div>
+
+@if (!FilteredArticles.Any())
 {
-    public List<Article> articles = new List<Article>();
+    <p class="home-no-articles">
+        Brak artykułów w wybranej kategorii.
+    </p>
+}
+else
+{
+    <ArticleCard Articles="FilteredArticles.ToList()"
+                 Permissions="false" />
+}
+
+@code {
+    private List<Article> articles = new();
+
+    private EnumArticleCategory? selectedCategory = null;
+
+    private IEnumerable<Article> FilteredArticles
+    {
+        get
+        {
+            if (selectedCategory == null)
+            {
+                return articles;
+            }
+
+            return articles.Where(
+                article => article.Category == selectedCategory.Value
+            );
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
         articles = await articleService.GetAllArticlesAsync();
+    }
+
+    private void SelectCategory(EnumArticleCategory? category)
+    {
+        selectedCategory = category;
+    }
+
+    private string GetTabClass(EnumArticleCategory? category)
+    {
+        return selectedCategory == category
+            ? "home-category-tab active"
+            : "home-category-tab";
     }
 }
