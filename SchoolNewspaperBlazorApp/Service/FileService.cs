@@ -69,5 +69,18 @@ namespace SchoolNewspaperBlazorApp.Service
             var file = await _fileRepository.GetFileByIdAsync(id);
             return file.FileName;
         }
+        public async Task<List<string>> GetImagesByArticleIdAsync(int articleId)
+        {
+            var files = await _fileRepository.GetFilesByArticleIdAsync(articleId);
+
+            var images = new List<string>();
+
+            foreach (var file in files)
+            {
+                images.Add($"/Images/{file.FileName}");
+            }
+
+            return images;
+        }
     }
 }

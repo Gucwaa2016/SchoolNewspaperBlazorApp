@@ -38,6 +38,14 @@ namespace SchoolNewspaperBlazorApp.Repository
             await _context.Files.AddAsync(file);
             await _context.SaveChangesAsync();
         }
+        public async Task<List<MediaFile>> GetFilesByArticleIdAsync(int articleId)
 
+        {
+            await using var _context = await _contextFactory.CreateDbContextAsync();
+
+            return await _context.Files
+                .Where(f => f.ArticleId == articleId)
+                .ToListAsync();
+        }
     }
 }
