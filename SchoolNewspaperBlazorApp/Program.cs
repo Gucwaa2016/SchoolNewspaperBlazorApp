@@ -5,7 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using SchoolNewspaperBlazorApp.Components;
 using SchoolNewspaperBlazorApp.Data;
+<<<<<<< Updated upstream
 using SchoolNewspaperBlazorApp.Data.Enums;
+=======
+>>>>>>> Stashed changes
 using SchoolNewspaperBlazorApp.Data.Seeders;
 using SchoolNewspaperBlazorApp.Interfaces.Repository;
 using SchoolNewspaperBlazorApp.Interfaces.Service;
