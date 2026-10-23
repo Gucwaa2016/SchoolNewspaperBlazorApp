@@ -5,7 +5,7 @@
 namespace SchoolNewspaperBlazorApp.Migrations
 {
     /// <inheritdoc />
-    public partial class Initek : Migration
+    public partial class Init1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
